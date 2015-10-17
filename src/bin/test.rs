@@ -19,29 +19,36 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#![feature(io)]
-#![feature(collections)]
-#![feature(path)]
-
 extern crate svg;
 
-use std::old_io::{BufferedWriter, File, Truncate, ReadWrite};
 use std::collections::HashMap;
+use std::fs::OpenOptions;
+use std::io::Result;
 
 use svg::SVG;
 use svg::Transform;
-// use svg::{Circle, Rect, RoundedRect};
 
-pub fn main() {
-   let mut output = BufferedWriter::new(File::open_mode(&Path::new("output.svg"), Truncate, ReadWrite).unwrap());
+fn main() {
+   if let Err (r) = do_it() {
+      panic!("error: {:?}", r)
+   }
+}
+
+fn do_it() -> Result<()> {
+   let mut output = try!(OpenOptions::new()
+                                     .create(true)
+                                     .write(true)
+                                     .truncate(true)
+                                     .open("output.svg"));
    let mut image = SVG::new(12, 12);
    let mut attribs = HashMap::new();
-   let polygon_points: Vec<(i32, i32)> = vec![(350,75),  (379,161), (469,161), (397,215),
-                          (423,301), (350,250), (277,301), (303,215),
-                          (231,161), (321,161)];
-   attribs.insert(String::from_str("fill"), String::from_str("green"));
-   attribs.insert(String::from_str("stroke"), String::from_str("orange"));
-   attribs.insert(String::from_str("stroke-width"), String::from_str("2"));
+   let polygon_points: Vec<(i32, i32)> =
+      vec![(350,75),  (379,161), (469,161), (397,215),
+           (423,301), (350,250), (277,301), (303,215),
+           (231,161), (321,161)];
+   attribs.insert("fill".to_string(), "green".to_string());
+   attribs.insert("stroke".to_string(), "orange".to_string());
+   attribs.insert("stroke-width".to_string(), "2".to_string());
 
    let mut t = Transform::new();
    t.translate(100, 200);
@@ -62,8 +69,5 @@ pub fn main() {
    image.title("Svg library test Main !");
    image.desc("A simple main test for the rust svg generation library");
 
-    match image.finalize(&mut output) {
-        Ok(_)       => {},
-        Err(err)    => panic!("{}", err)
-   }
+   image.finalize(&mut output)
 }
