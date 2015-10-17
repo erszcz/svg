@@ -57,14 +57,12 @@ fn do_it() -> Result<()> {
 
    image.view_box(0, 0, 1200, 400);
    image.g_begin(Some("First_Group"), Some(&t), Some(&attribs));
-   image.g_begin(Some("First_Group"), Some(&t), Some(&attribs));
-   // image.g_transform(t.clone());
+   //image.g_transform(&t.clone());
    //image.g_rotate(15);
    image.circle(600, 200, 100, "id=jojo fill=red stroke=blue stroke-width=10");
    image.rect(700, 200, 200, 200, "fill=red stroke=blue stroke-width=10");
    image.rounded_rect(800, 600, 200, 200, 60, 30, "fill=red stroke=blue stroke-width=10");
    image.polygon(&polygon_points, "fill=red stroke=blue stroke-width=10");
-   image.g_end();
    image.g_end();
    image.title("Svg library test Main !");
    image.desc("A simple main test for the rust svg generation library");
